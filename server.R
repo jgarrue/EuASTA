@@ -52,6 +52,13 @@ shinyServer(function(input, output) {
     else {}
     
   })
+  
+  output$AirportOnDemand <- renderUI({
+    SelectedStateAirports <- filter(Airport_Traffic,STATE_NAME==input$targetstate)
+    if (input$targetstate == 'Todos') {AirportsOnDemand <- c('Todos',levels(as.factor(Airport_Traffic$APT_NAME)))}
+    else {AirportsOnDemand <- c('Todos',levels(as.factor(SelectedStateAirports$APT_NAME)))}
+    selectInput("targetairport", "Elige qué aeropuerto quieres analizar", AirportsOnDemand)
+  })
 
   
 })

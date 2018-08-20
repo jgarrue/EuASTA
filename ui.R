@@ -17,11 +17,8 @@ library(dplyr)
 get(load(url("https://github.com/jgarrue/EuASTA/blob/master/EuroAirportTraffic.rda?raw=true")))
 #Listas
 countries <- c('Todos',levels(as.factor(Airport_Traffic$STATE_NAME)))
-airports <- c('Todos',levels(as.factor(Airport_Traffic$APT_NAME)))
 years <- levels(as.factor(Airport_Traffic$YEAR))
 months_ES <- c('Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre')
-graphs_ES <- c('Comparativa entre países','Evolución de vuelos en un país','Comparativa entre aeropuertos de un país','Análisis de un aeropuerto','Análisis de un aeropuerto (agregado por meses)')
-
 
 shinyUI(
   navbarPage("European Airport Space Traffic Analysis",
@@ -51,17 +48,7 @@ shinyUI(
                                   condition = "input.targetstate != 'Todos'",
                                   radioButtons('targetStateOptions','Elige qué gráfica quieres ver para este país',c('Vuelos totales agregados','Comparativa de aeropuertos'))
                                 ),
-                                selectInput('targetairport','Elige qué aeropuerto quieres analizar', airports, airports[1]),
-#                                conditionalPanel(
-#                                  condition = "input.targetstate == 'Todos'",
-#                                  OnDemandAirports <- c('Todos',levels(as.factor(Airport_Traffic$APT_NAME))),
-#                                  selectInput('targetOnDemandAirport','Elige qué aeropuerto quieres analizar',OnDemandAirports,OnDemandAirports[1])
-#                                ),
-#                                conditionalPanel(
-#                                  condition = "input.targetstate == 'Todos'",
-#                                  OnDemandAirports <- c('Todos',levels(as.factor(filter(Airport_Traffic,STATE_NAME==input$targetstate)%>%select(APT_NAME) ))),
-#                                  selectInput('targetOnDemandAirport','Elige qué aeropuerto quieres analizar',OnDemandAirports,OnDemandAirports[1])
-#                                ),
+                                uiOutput("AirportOnDemand"),
                                 conditionalPanel(
                                   condition = "input.targetairport != 'Todos'",
                                   radioButtons('targetAirportOptions','Elige qué gráfica quieres ver para este aeropuerto',c('Gráfico de vuelos en un periodo','Agregado por meses'))
