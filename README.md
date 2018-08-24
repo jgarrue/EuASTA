@@ -1,6 +1,9 @@
 # EuASTA
 Estudio del tráfico aéreo en los aeropuertos europeos
 Javier Gómez-Arrue Azpiazu
+Aplicación disponible en:
+https://jgomezarrue.shinyapps.io/EuASTA
+
 Datos obtenidos de la página del repositorio Pan-Europeo de desempeño de Seguridad en Navegación Aérea de la agencia EUROCONTROL
 http://ansperformance.eu/data/performancearea/
 
