@@ -12,9 +12,8 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
+library(readxl)
 
-#Datos
-get(load(url("https://github.com/jgarrue/EuASTA/blob/master/EuroAirportTraffic.rda?raw=true")))
 #Listas
 countries <- c('Todos',levels(as.factor(Airport_Traffic$STATE_NAME)))
 years <- levels(as.factor(Airport_Traffic$YEAR))
@@ -29,6 +28,8 @@ shinyUI(
                               h2("autor: Javier Gómez-Arrue Azpiazu", align = "center"),
                               h3("Datos obtenidos de la página del repositorio Pan-Europeo de desempeño de Seguridad en Navegación Aérea de la agencia EUROCONTROL",align = "center"),
                               h3("http://ansperformance.eu/data/performancearea/",align = "center"),
+                              h3("Código disponible en:",align = "center"),
+                              h3("https://github.com/jgarrue/EuASTA",align = "center"),
                               p("Mediante ésta sencilla aplicación puede analizarse el tráfico aéreo de los distintos aeropuertos europeos."),
                               p("La primera pestaña (esta) describe el contenido y el autor."),
                               p("La segunda pestaña presenta una serie de gráficos interactivos en los que puede explorarse el tráfico de los distintos aeropuertos europeos entre 2014 y julio del 2018."),

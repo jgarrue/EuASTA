@@ -1,9 +1,7 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
-
-#Carga de datos
-get(load(url("https://github.com/jgarrue/EuASTA/blob/master/EuroAirportTraffic.rda?raw=true")))
+library(readxl)
 
 shinyServer(function(input, output) {
 
