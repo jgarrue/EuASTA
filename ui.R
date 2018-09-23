@@ -1,19 +1,3 @@
-#
-# Ejemplo de app shiny para master UNED Big Data
-# Módulo visualización avanzada
-#
-# Ejemplo para ejercicio de fin de módulo
-#
-# Basado en parte en el ejemplo de Joe Cheng
-# https://gist.github.com/jcheng5/3239667
-# Basado en parte en el ejemplo de Pedro Concejero
-# https://gist.github.com/pedroconcejero
-
-library(shiny)
-library(ggplot2)
-library(dplyr)
-library(readxl)
-
 #Listas
 countries <- c('Todos',levels(as.factor(Airport_Traffic$STATE_NAME)))
 years <- levels(as.factor(Airport_Traffic$YEAR))
@@ -33,6 +17,7 @@ shinyUI(
                               p("Mediante ésta sencilla aplicación puede analizarse el tráfico aéreo de los distintos aeropuertos europeos."),
                               p("La primera pestaña (esta) describe el contenido y el autor."),
                               p("La segunda pestaña presenta una serie de gráficos interactivos en los que puede explorarse el tráfico de los distintos aeropuertos europeos entre 2014 y julio del 2018."),
+                              p("La tercera pestaña muestra una serie de gráficos interactivos en los que puede explorarse los retrasos producidos en las llegadas entre 2014 y julio del 2018."),
                               p("Pueden identificarse los países con mayor número de vuelos en europa, que corresponden a Reino Unido, Alemania, España y Francia."),
                               p("Mediante la modificación del inicio y final del periodo revisado, puede verse como se ha ido modificando éste orden."),
                               p("Puede observarse como España ha adelantado a Francia, separándose de ella en el último año. Y cómo el Reino Unido ha desbancado a Alemania como principal 'HUB' europeo."),
@@ -43,8 +28,11 @@ shinyUI(
                    tabPanel("Funcionamiento diario del aeropuerto",
                             sidebarPanel(
                               
-                                #selectInput('targetgraph','Indica la gráfica que quieres', graphs_ES),
                                 selectInput('targetstate','Elige qué país quieres analizar', countries, countries[1]),
+                                conditionalPanel(
+                                  condition = "input.targetstate == 'Todos' && input.targetairport == 'Todos'",
+                                  radioButtons('HistogramOrMap','Elige el tipo de gráfica',c('Ver histograma','Ver mapa'))
+                                ),
                                 conditionalPanel(
                                   condition = "input.targetstate != 'Todos'",
                                   radioButtons('targetStateOptions','Elige qué gráfica quieres ver para este país',c('Vuelos totales agregados','Comparativa de aeropuertos'))
@@ -57,8 +45,14 @@ shinyUI(
                                 selectInput('targetmonth1','Indica el inicio del periodo a analizar', months_ES, months_ES[1]),
                                 selectInput('targetyear1',NULL, choices=years, selected=years[1]),
                                 selectInput('targetmonth2','Indica el final del periodo a analizar', months_ES, months_ES[12]),
-                                selectInput('targetyear2',NULL, choices=years, selected=tail(years, n=1))
-                              
+                                selectInput('targetyear2',NULL, choices=years, selected=tail(years, n=1)),
+                                conditionalPanel(
+                                  condition = "(input.targetstate != 'Todos' && input.targetairport == 'Todos' && input.targetStateOptions == 'Vuelos totales agregados') || (input.targetairport != 'Todos' && input.targetAirportOptions == 'Gráfico de vuelos en un periodo')",
+                                  checkboxInput('Sh_LM', 'Marca para mostrar la línea de regresión lineal', value = FALSE, width = NULL),
+                                  checkboxInput('Sh_LOESS', 'Marca para mostrar la línea de regresión LOESS', value = FALSE, width = NULL),
+                                  checkboxInput('Sh_GAM', 'Marca para mostrar el modelo GAM', value = TRUE, width = NULL)
+                                )
+                                
                             ),
                             
                             mainPanel(
@@ -68,7 +62,31 @@ shinyUI(
                             )
                    ),
                    tabPanel("Retrasos",
-                            h1("Actualmente en proceso de análisis de los datos", align = "center")
+                            sidebarPanel(
+                              
+                              selectInput('Delay_targetstate','Elige qué país quieres analizar', countries, countries[1]),
+                              uiOutput("Delay_AirportOnDemand"),
+                              conditionalPanel(
+                                condition = "input.Delay_targetairport == 'Todos'",
+                                checkboxInput('Delay_distribution', 'Indica si quieres mostrar la distribución de los retrasos', value = FALSE, width = NULL),
+                                conditionalPanel(
+                                  condition = "input.Delay_distribution != true",
+                                  selectInput('Delay_targetdelay','Indica el tipo de retraso que quieres analizar', Delay_codes[,2], Delay_codes[1,2]),
+                                  checkboxInput('Delay_adjusted', 'Indica si quieres ajustar los retrasos al número de vuelos', value = FALSE, width = NULL)
+                                )
+                              ),
+                              selectInput('Delay_targetmonth1','Indica el inicio del periodo a analizar', months_ES, months_ES[1]),
+                              selectInput('Delay_targetyear1',NULL, choices=years, selected=years[1]),
+                              selectInput('Delay_targetmonth2','Indica el final del periodo a analizar', months_ES, months_ES[12]),
+                              selectInput('Delay_targetyear2',NULL, choices=years, selected=tail(years, n=1))
+                              
+                            ),
+                            
+                            mainPanel(
+                              plotOutput('Delay_plot',
+                                         height=500)
+                              
+                            )
                    )
   
 ))
